@@ -10,15 +10,37 @@ namespace Data
 {
     public class SafeProcedure
     {
-        public T ExecuteAndGetInstance<T>(Database database,string procedureName, ParameterMapper parameterMapper,RecordMapper<T> recordMapper) where T:new()
+        public static T ExecuteAndGetInstance<T>(Database database,string procedureName, ParameterMapper parameterMapper,RecordMapper<T> recordMapper) where T:new()
         {
             T objectInstance = new T();
-
-            return default(T);
+            if (!ExecuteAndHydrateInstance(objectInstance, database, procedureName, parameterMapper, recordMapper))
+                return default(T);
+            return objectInstance;
         }
-        public static bool ExecuteAndHydrateInstance<T>(T objectInstance,Database database, string procedureName, ParameterMapper parameterMapper, RecordMapper<T> recordMapper)
+        //public static bool ExecuteAndHydrateInstance<T>(T objectInstance,Database database, string procedureName, ParameterMapper parameterMapper, RecordMapper<T> recordMapper)
+        //{
+        //    bool result = false;
+        //    return result;
+        //}
+        public static bool ExecuteAndHydrateInstance<T>(T objectInstance, Database database,
+        string procedureName, ParameterMapper parameterMapper, RecordMapper<T> recordMapper)
         {
             bool result = false;
+            try
+            {
+                using (IRecordSet reader = Procdure.Execute(database, procedureName, parameterMapper))
+                {
+                    if (reader.Read())
+                    {
+                        recordMapper(reader, objectInstance);
+                        result = true;
+                    }
+                }
+            }
+            catch (Exception ex) // Procedure class already wrapped all necessary data
+            {
+                throw ex;
+            }
             return result;
         }
     }

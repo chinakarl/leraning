@@ -57,7 +57,7 @@ namespace Data
             try 
             {
                 //this.SetConnectionString(ConnectionStringProvider.GetConnectionString(instanceName));
-                this.SetConnectionString("Data Source = test;Initial Catalog = myDataBase;User Id = sa;Password = 123123;");
+                this.SetConnectionString("Data Source=.;Initial Catalog=test;User Id=zhx;Password=123123;");
             }
             catch
             {
